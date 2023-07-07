@@ -1,0 +1,28 @@
+.errorMessage {
+  color: #d32f2f;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 400;
+  font-size: 0.75rem;
+  line-height: 1.66;
+  letter-spacing: 0.03333em;
+  text-align: left;
+  margin-top: 3px;
+  margin-right: 14px;
+  margin-bottom: 0;
+}
+
+.errorBorder {
+  border: 1px solid #f44336;
+  border-radius: 4px;
+}
+
+.form-control:focus {
+  border-color: 4px solid #f44336 !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25) !important;
+}
+.react-tel-input .form-control:focus {
+  border-color: 4px solid #f44336 !important;
+}
+.form-control:hover {
+  border-color: white !important;
+}

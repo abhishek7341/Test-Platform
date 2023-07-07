@@ -7,7 +7,6 @@ import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -24,11 +23,13 @@ import HeaderCurrentDateTime from "./HeaderCurrentDateTime";
 import "./SidebarHeader.css";
 import { NavLink, useLocation } from "react-router-dom";
 import { AppRoutings } from "../../utility/enum/app-routings";
+import { ReactNode } from "react";
 
 const drawerWidth = 280;
 
 interface ISidebarHeaderProps {
   window?: () => Window;
+  children: ReactNode;
 }
 const SidebarHeader: React.FC<ISidebarHeaderProps> = (sidebarHeaderProps) => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -96,7 +97,9 @@ const SidebarHeader: React.FC<ISidebarHeaderProps> = (sidebarHeaderProps) => {
             <ListItemButton
               sx={{ height: "50px", mx: 3, borderRadius: 2 }}
               className={`sidebar-tab-hover ${
-                location.pathname === tab.path ? "sidebar-tab-hover-active" : ""
+                location.pathname.includes(tab.path)
+                  ? "sidebar-tab-hover-active"
+                  : ""
               }`}
             >
               <div className="tab-icon">{tab.icon}</div>
@@ -153,14 +156,13 @@ const SidebarHeader: React.FC<ISidebarHeaderProps> = (sidebarHeaderProps) => {
         sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
         aria-label="mailbox folders"
       >
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Drawer
           container={container}
           variant="temporary"
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true,
           }}
           sx={{
             display: { xs: "block", md: "none" },
@@ -187,13 +189,14 @@ const SidebarHeader: React.FC<ISidebarHeaderProps> = (sidebarHeaderProps) => {
         </Drawer>
       </Box>
       <Box
-        component="main"
         sx={{
-          flexGrow: 1,
           p: 3,
-          width: { md: `calc(100% - ${drawerWidth}px)` },
+          width: { xs: "100%", md: `calc(100% - ${drawerWidth}px)` },
+          marginTop: 6,
         }}
-      ></Box>
+      >
+        {sidebarHeaderProps.children}
+      </Box>
     </Box>
   );
 };

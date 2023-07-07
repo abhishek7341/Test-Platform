@@ -1,56 +1,187 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import Sidebar from "./app/components/SidebarHeader/SidebarHeader";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import Mission from "../src/app/pages/Missions/missionListing";
+import User from "../src/app/pages/User/UserListing";
 import "./App.css";
 import { Typography } from "@mui/material";
-import logo from "./logo.svg";
-import "./App.css";
-import Carousel from "./app/components/carousel/Carousel";
-import Layout from "./app/components/Layout/Layout";
 import Login from "./app/pages/Login";
 import ResetPassword from "./app/pages/ResetPassword/ResetPassword";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AppRoutings } from "./app/utility/enum/app-routings";
-import { useLocation } from "react-router-dom";
+import MissionAddEdit from "./app/pages/Missions/missionAddEdit";
+import Registration from "./app/pages/Registration/Registration";
+import ForgotPassword from "./app/pages/ForgotPassword/ForgorPassword";
+import CMSPage from "./app/pages/cms/CMSPage";
+import AddEditCms from "./app/pages/cms/AddEditCms";
+import AuthContext from "./app/store/auth-context";
+import { useLocation } from "react-router";
+import { AuthNotRequired } from "./app/utility/constants";
+import BannerListing from "./app/pages/Banner/BannerListing";
+import BannerAddEdit from "./app/pages/Banner/BannerAddEdit";
+import MissionThemeListing from "./app/pages/MissionTheme/MissionThemeListing";
+import MissionThemeAddEdit from "./app/pages/MissionTheme/MissionThemeAddEdit";
 
 const App: React.FC = () => {
-  const ignoreSidebar = [
-    AppRoutings.UserListing,
-    AppRoutings.CMSPageListing,
-    AppRoutings.MissionListing,
-    AppRoutings.ThemeListing,
-    AppRoutings.BannerListing,
-    AppRoutings.StoryListing,
-    AppRoutings.ApplicationListing,
-    AppRoutings.SkillListing,
-  ];
   const location = useLocation();
-  let showSidebar = ignoreSidebar.toString().includes(location.pathname);
+  const authCtx = useContext(AuthContext);
+  const isLoggedIn = authCtx.isLoggedIn;
+
   return (
     <>
-      {showSidebar ? <Sidebar /> : null}
-
       <ToastContainer />
-      <Typography
-        component={"div"}
-        sx={{
-          marginLeft: showSidebar ? { md: "280px" } : null,
-          p: showSidebar ? 3 : null,
-        }}
-      >
+      {!isLoggedIn &&
+        !AuthNotRequired.toString().includes(location.pathname) && (
+          <Navigate to={AppRoutings.LogIn} />
+        )}
+      <Typography>
         <Routes>
-          <Route path={AppRoutings.UserListing} element={<Mission />} />
-          <Route path={AppRoutings.CMSPageListing} element={<Mission />} />
-          <Route path={AppRoutings.MissionListing} element={<Mission />} />
-          <Route path={AppRoutings.ThemeListing} element={<Mission />} />
-          <Route path={AppRoutings.SkillListing} element={<Mission />} />
-          <Route path={AppRoutings.ApplicationListing} element={<Mission />} />
-          <Route path={AppRoutings.StoryListing} element={<Mission />} />
-          <Route path={AppRoutings.BannerListing} element={<Mission />} />
-          <Route path={AppRoutings.LogIn} element={<Login />} />
+          <Route path="*" element={<Navigate to={AppRoutings.LogIn} />} />
+          <Route
+            path={AppRoutings.UserListing}
+            element={
+              <Sidebar>
+                <User />
+              </Sidebar>
+            }
+          />
+          <Route
+            path={AppRoutings.MissionListing}
+            element={
+              <Sidebar>
+                <Mission />
+              </Sidebar>
+            }
+          />
+          <Route
+            path={AppRoutings.MissionAdd}
+            element={
+              <Sidebar>
+                <MissionAddEdit />
+              </Sidebar>
+            }
+          />
+          <Route
+            path={AppRoutings.MissionEdit + ":missionId"}
+            element={
+              <Sidebar>
+                <MissionAddEdit />
+              </Sidebar>
+            }
+          />
+          <Route
+            path={AppRoutings.ThemeListing}
+            element={
+              <Sidebar>
+                <MissionThemeListing />
+              </Sidebar>
+            }
+          />
+          <Route
+            path={AppRoutings.ThemeAdd}
+            element={
+              <Sidebar>
+                <MissionThemeAddEdit />
+              </Sidebar>
+            }
+          />
+          <Route
+            path={AppRoutings.ThemeEdit + ":themeId"}
+            element={
+              <Sidebar>
+                <MissionThemeAddEdit />
+              </Sidebar>
+            }
+          />
+          <Route
+            path={AppRoutings.SkillListing}
+            element={
+              <Sidebar>
+                <Mission />
+              </Sidebar>
+            }
+          />
+          <Route
+            path={AppRoutings.ApplicationListing}
+            element={
+              <Sidebar>
+                <Mission />
+              </Sidebar>
+            }
+          />
+          <Route
+            path={AppRoutings.StoryListing}
+            element={
+              <Sidebar>
+                <Mission />
+              </Sidebar>
+            }
+          />
+          <Route
+            path={AppRoutings.BannerListing}
+            element={
+              <Sidebar>
+                <BannerListing />
+              </Sidebar>
+            }
+          />
+          <Route
+            path={AppRoutings.BannerAdd}
+            element={
+              <Sidebar>
+                <BannerAddEdit />
+              </Sidebar>
+            }
+          />
+          <Route
+            path={AppRoutings.BannerEdit + ":bannerId"}
+            element={
+              <Sidebar>
+                <BannerAddEdit />
+              </Sidebar>
+            }
+          />
+          <Route
+            path={AppRoutings.LogIn}
+            element={
+              !isLoggedIn ? (
+                <Login />
+              ) : (
+                <Navigate to={AppRoutings.UserListing} />
+              )
+            }
+          />
           <Route path={AppRoutings.ResetPassword} element={<ResetPassword />} />
+          <Route path={AppRoutings.Registation} element={<Registration />} />
+          <Route
+            path={AppRoutings.ForgotPassword}
+            element={<ForgotPassword />}
+          />
+          <Route
+            path={AppRoutings.CMSListing}
+            element={
+              <Sidebar>
+                <CMSPage />
+              </Sidebar>
+            }
+          />
+          <Route
+            path={AppRoutings.CMSAdd}
+            element={
+              <Sidebar>
+                <AddEditCms />
+              </Sidebar>
+            }
+          />
+          <Route
+            path={AppRoutings.CMSEdit + ":contentId"}
+            element={
+              <Sidebar>
+                <AddEditCms />
+              </Sidebar>
+            }
+          />
         </Routes>
       </Typography>
     </>

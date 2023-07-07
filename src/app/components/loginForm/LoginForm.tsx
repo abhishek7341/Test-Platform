@@ -6,38 +6,38 @@ import {
   Typography,
   InputAdornment,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
+import { AxiosError } from "axios";
 import { useFormik } from "formik";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import { login } from "../../services/userService";
+import { login } from "../../services/auth-service";
+import AuthContext from "../../store/auth-context";
 import { AppRoutings } from "../../utility/enum/app-routings";
 import { IFormDesignProps } from "../../utility/interfaces/FormDesign";
+import { ILoginPayload } from "../../utility/interfaces/payload";
 import { IUser } from "../../utility/interfaces/user";
 import CustomTextField from "../TextField/CustomTextField";
-import CustomButton from "../UI/Button";
+import CustomButton from "../UI/CustomButton";
 
 const LoginForm = ({ style }: IFormDesignProps) => {
+  const authCtx = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [validateMessage, setValidateMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
-  const loginValues: IUser = {
-    emailAddress: "",
+  const loginValues: ILoginPayload = {
+    email: "",
     password: "",
   };
   const validate = Yup.object().shape({
-    emailAddress: Yup.string()
-      .email("Invalid email")
-      .required("Email is required"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
     password: Yup.string().required("Password is required"),
   });
 
@@ -45,14 +45,18 @@ const LoginForm = ({ style }: IFormDesignProps) => {
     initialValues: loginValues,
     validationSchema: validate,
     onSubmit: async (values) => {
-      console.log(values);
-      const response: number = await login(values);
-      if (response === 200) {
+      setIsLoading(true);
+      try {
+        const response = await login(values);
         toast.success("successfully loggedIn");
+        authCtx.login(response.data.data.token);
         setValidateMessage("");
-      } else {
+        // navigate("/admin/cms");
+        navigate(AppRoutings.UserListing);
+      } catch (err) {
         setValidateMessage("Invalid Credentials");
       }
+      setIsLoading(false);
     },
   });
   return (
@@ -63,34 +67,24 @@ const LoginForm = ({ style }: IFormDesignProps) => {
         sx={{ display: "flex", flexDirection: "column" }}
       >
         <FormControl sx={{ marginBottom: "1rem" }}>
-          <FormHelperText
-            id="outlined-weight-helper-text"
-            sx={{ marginLeft: 0 }}
-          >
-            Email Address
+          <FormHelperText id="outlined-weight-helper-text">
+            Email Address<span className="required"> *</span>
           </FormHelperText>
           <CustomTextField
             type="email"
             id="emailAddress"
             placeholder="evan.donohou@gmail.com"
             variant="outlined"
-            {...getFieldProps("emailAddress")}
+            {...getFieldProps("email")}
             error={
-              (touched.emailAddress && errors.emailAddress) || validateMessage
-                ? true
-                : false
+              (touched.email && errors.email) || validateMessage ? true : false
             }
-            helperText={
-              (touched.emailAddress && errors.emailAddress) || validateMessage
-            }
+            helperText={(touched.email && errors.email) || validateMessage}
           />
         </FormControl>
         <FormControl sx={{ marginBottom: "1rem" }}>
-          <FormHelperText
-            id="outlined-weight-helper-text"
-            sx={{ marginLeft: 0 }}
-          >
-            Password
+          <FormHelperText id="outlined-weight-helper-text">
+            Password<span className="required"> *</span>
           </FormHelperText>
           <CustomTextField
             type={showPassword ? "text" : "password"}
@@ -112,7 +106,6 @@ const LoginForm = ({ style }: IFormDesignProps) => {
                   <IconButton
                     aria-label="toggle password visibility"
                     onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
                     edge="end"
                   >
                     {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -123,7 +116,13 @@ const LoginForm = ({ style }: IFormDesignProps) => {
           ></CustomTextField>
         </FormControl>
         <FormControl sx={{ marginBottom: "1rem" }}>
-          <CustomButton type="submit">Login</CustomButton>
+          <CustomButton type="submit" disabled={isLoading}>
+            {isLoading ? (
+              <CircularProgress sx={{ color: "orange" }} />
+            ) : (
+              "Login"
+            )}
+          </CustomButton>
         </FormControl>
       </Box>
       <Link
@@ -134,7 +133,7 @@ const LoginForm = ({ style }: IFormDesignProps) => {
       </Link>
       <Typography sx={{ color: "gray", marginTop: "1rem" }}>
         Don't have an account?
-        <Link to="/register" style={{ textDecoration: "none" }}>
+        <Link to={AppRoutings.Registation} style={{ textDecoration: "none" }}>
           Create an account
         </Link>
       </Typography>

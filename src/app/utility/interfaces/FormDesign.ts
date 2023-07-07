@@ -1,5 +1,5 @@
-import { CSSProperties } from "@mui/styled-engine-sc";
+import { SxProps, Theme } from "@mui/material";
 
 export interface IFormDesignProps {
-  style: CSSProperties;
+  style: SxProps<Theme>;
 }

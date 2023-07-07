@@ -1,0 +1,23 @@
+.sidebar-tab-hover {
+    color: #ffffff !important;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.sidebar-tab-hover:hover {
+    background-color: #f6a164 !important;
+    color: #000000 !important;
+    font-weight: bold;
+    box-shadow: 3px 5px 10px #10446B29;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.sidebar-tab-hover-active {
+    background-color: #ffffff !important;
+    color: #F88634 !important;
+    box-shadow: 3px 5px 10px #10446B29;
+    font-weight: bold;
+}
+
+.sidebar-tab-hover-active:hover {
+    color: #2070db !important;
+}

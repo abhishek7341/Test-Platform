@@ -2,6 +2,7 @@ export interface IUser {
   firstName?: string;
   lastName?: string;
   emailAddress?: string;
-  password: string;
+  phoneNumber?: string;
+  password?: string;
   confirmPassword?: string;
 }

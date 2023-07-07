@@ -1,17 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { CSSProperties } from "@mui/styled-engine";
 import { Box } from "@mui/material";
 import bannerImage from "../../assets/Sample.png";
-import classes from "./Carousel.module.css";
+import "./Carousel.css";
 import { ICarouselPropType } from "../../utility/interfaces/carousel";
+import { List } from "reselect/es/types";
+import { getAllBanners } from "../../services/bannerService";
+
+interface bannerPayload {
+  image: string;
+  text: string;
+}
 
 export default function Carousel({ style }: ICarouselPropType) {
-  var settings = {
+  const [banners, setBanners] = useState<Array<bannerPayload>>([]);
+  const getBanners = async () => {
+    try {
+      let bannerList: Array<bannerPayload> = [];
+      const response = await getAllBanners();
+      response.data.data.result.map((res: any) => {
+        bannerList.push({ image: res.bannerImagePath, text: res.bannerText });
+      });
+      setBanners(bannerList);
+    } catch (err) {}
+  };
+  useEffect(() => {
+    getBanners();
+  }, []);
+
+  const settings = {
     dots: true,
-    dotsClass: classes.dots,
+    dotsClass: "dots",
     infinite: true,
     autoplay: true,
     autoplaySpeed: 4000,
@@ -20,25 +42,22 @@ export default function Carousel({ style }: ICarouselPropType) {
   };
 
   const images = [
-    "../../assets/Sample.png",
-    "../../assets/Sample.png",
-    "../../assets/Sample.png",
-    "../../assets/Sample.png",
-    "../../assets/Sample.png",
+    bannerImage,
+    bannerImage,
+    bannerImage,
+    bannerImage,
+    bannerImage,
   ];
   return (
-    <div className={classes.carousel} style={style}>
+    <Box className={"carousel"} sx={style}>
       <Slider {...settings}>
-        {images.map((image: string) => (
-          <div>
-            <img
-              style={{ width: "100%", height: "100%" }}
-              src={bannerImage}
-              alt="img"
-            />
+        {banners.map((banner: bannerPayload) => (
+          <div className="bannerDiv">
+            <img className="bannerImg" src={bannerImage} alt="img" />
+            <span className="bannerText">{banner.text}</span>
           </div>
         ))}
       </Slider>
-    </div>
+    </Box>
   );
 }

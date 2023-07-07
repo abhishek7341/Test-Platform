@@ -1,0 +1,32 @@
+.addEditMainBox {
+  border: 1px solid #e8e8e8;
+  margin-top: 40px;
+}
+
+.addEditHead {
+  background-color: #f8f9fc;
+  border: 1px solid #e8e8e8;
+  padding: 12px;
+  padding-left: 25px;
+  font-size: 22px;
+}
+
+.subBox {
+  padding: 25px;
+  padding-right: 0px;
+}
+
+.formTextFileds input {
+  padding: 10px !important;
+  font-size: 14px;
+  outline: none !important;
+}
+.formTextFileds input:focus {
+  outline: none !important;
+  box-shadow: 0 0 3px #f88634 !important;
+  border-color: #f88634;
+}
+.adminFormLabel {
+  color: #414141;
+  font-size: small;
+}

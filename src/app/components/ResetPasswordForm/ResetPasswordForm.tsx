@@ -1,5 +1,6 @@
 import {
   Box,
+  CircularProgress,
   FormControl,
   FormHelperText,
   IconButton,
@@ -11,13 +12,19 @@ import { IFormDesignProps } from "../../utility/interfaces/FormDesign";
 import { IUser } from "../../utility/interfaces/user";
 import CustomTextField from "../TextField/CustomTextField";
 import * as Yup from "yup";
-import CustomButton from "../UI/Button";
-import { Link } from "react-router-dom";
+import CustomButton from "../UI/CustomButton";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { PASSWORD_EXPRESSION, PASSWORD_LENGTH } from "../../configs";
+import { IResetPasswordPayload } from "../../utility/interfaces/payload";
+import { resetPassword } from "../../services/auth-service";
+import { toast } from "react-toastify";
+import { AppRoutings } from "../../utility/enum/app-routings";
 
 const ResetPasswordForm = ({ style }: IFormDesignProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   const [validateMessage, setValidateMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -26,12 +33,7 @@ const ResetPasswordForm = ({ style }: IFormDesignProps) => {
   const handleClickShowConfirmPassword = () =>
     setShowConfirmPassword((show) => !show);
 
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
-  const formValues: IUser = {
+  const formValues: IResetPasswordPayload = {
     password: "",
     confirmPassword: "",
   };
@@ -52,8 +54,17 @@ const ResetPasswordForm = ({ style }: IFormDesignProps) => {
   const { errors, touched, getFieldProps, handleSubmit } = useFormik({
     initialValues: formValues,
     validationSchema: validate,
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values) => {
+      setIsLoading(true);
+      try {
+        const response = await resetPassword(
+          values,
+          "331a1c60-b110-4b30-aa00-851e404be34827-06-2023+07%3a49%3a13+%2b00%3a00"
+        );
+        toast.success("Password changed successfully");
+        navigate(AppRoutings.LogIn);
+      } catch (err) {}
+      setIsLoading(false);
     },
   });
   return (
@@ -63,11 +74,14 @@ const ResetPasswordForm = ({ style }: IFormDesignProps) => {
         Please enter a new password in the fields below
       </Typography>
       <Box
+        onSubmit={handleSubmit}
         component="form"
         sx={{ display: "flex", flexDirection: "column", marginBottom: "1rem" }}
       >
         <FormControl sx={{ marginBottom: "1rem" }}>
-          <FormHelperText sx={{ marginLeft: 0 }}>New Password</FormHelperText>
+          <FormHelperText>
+            New Password<span className="required"> *</span>
+          </FormHelperText>
           <CustomTextField
             type={showPassword ? "text" : "password"}
             id="password"
@@ -88,7 +102,6 @@ const ResetPasswordForm = ({ style }: IFormDesignProps) => {
                   <IconButton
                     aria-label="toggle password visibility"
                     onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
                     edge="end"
                   >
                     {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -99,8 +112,8 @@ const ResetPasswordForm = ({ style }: IFormDesignProps) => {
           />
         </FormControl>
         <FormControl sx={{ marginBottom: "1rem" }}>
-          <FormHelperText sx={{ marginLeft: 0 }}>
-            Confirm New Password
+          <FormHelperText>
+            Confirm New Password<span className="required"> *</span>
           </FormHelperText>
           <CustomTextField
             id="confirmPassword"
@@ -118,7 +131,6 @@ const ResetPasswordForm = ({ style }: IFormDesignProps) => {
                   <IconButton
                     aria-label="toggle password visibility"
                     onClick={handleClickShowConfirmPassword}
-                    onMouseDown={handleMouseDownPassword}
                     edge="end"
                   >
                     {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -128,9 +140,18 @@ const ResetPasswordForm = ({ style }: IFormDesignProps) => {
             }}
           />
         </FormControl>
-        <CustomButton type="submit">Change Password</CustomButton>
+        <CustomButton type="submit" disabled={isLoading}>
+          {isLoading ? (
+            <CircularProgress sx={{ color: "orange" }} />
+          ) : (
+            "Change Password"
+          )}
+        </CustomButton>
       </Box>
-      <Link to="/login" style={{ textDecoration: "none", color: "gray" }}>
+      <Link
+        to={AppRoutings.LogIn}
+        style={{ textDecoration: "none", color: "gray" }}
+      >
         Login
       </Link>
     </Box>

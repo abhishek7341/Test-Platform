@@ -1,3 +1,5 @@
-export interface ICarouselPropType{
-    style? :React.CSSProperties
+import { SxProps, Theme } from "@mui/material";
+
+export interface ICarouselPropType {
+  style?: SxProps<Theme>;
 }

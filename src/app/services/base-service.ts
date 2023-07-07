@@ -1,4 +1,3 @@
-/* eslint-disable import/no-anonymous-default-export */
 import axios, {
   AxiosError,
   AxiosResponse,
@@ -12,17 +11,15 @@ import { BASE_URL } from "../configs/index";
 
 axios.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    console.log(config.url);
     let isTokenRequired = true;
     // if (config.url?.includes(AppRoutings.LogIn)) {
     //   isTokenRequired = false;
     // }
     if (isTokenRequired === true) {
       const token = localStorage.getItem("token"); // TO DO
-      console.log(token);
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
-        console.log(config.headers.Authorization);
       }
     }
 
@@ -55,8 +52,8 @@ axios.interceptors.response.use(
         break;
       case HttpStatusCodes.BadRequest:
         toast.error(
-          error.response?.data
-            ? error.response?.data?.toString()
+          (error.response?.data as any)?.Errors
+            ? (error.response?.data as any)?.Errors.toString()
             : error.message
         );
         break;
@@ -78,7 +75,6 @@ axios.interceptors.response.use(
         );
         break;
     }
-
     return Promise.reject(error);
   }
 );
