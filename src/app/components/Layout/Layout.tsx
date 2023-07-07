@@ -3,6 +3,7 @@ import { Fragment, ReactNode } from "react";
 import { ILayoutProps } from "../../utility/interfaces/ui";
 import Carousel from "../carousel/Carousel";
 
+
 const Layout = ({ children }: ILayoutProps) => {
   return (
     <Box
