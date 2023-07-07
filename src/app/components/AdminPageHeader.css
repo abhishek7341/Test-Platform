@@ -1,0 +1,17 @@
+.heading-box {
+  position: relative;
+  margin-bottom: 40px;
+}
+.adminPageHeading {
+  border-bottom: 1px solid black;
+  font-size: xx-large;
+  max-width: fit-content;
+  padding-bottom: 5px;
+  margin-top: 20px;
+}
+
+hr {
+  position: absolute;
+  bottom: -10px;
+  width: 100%;
+}
