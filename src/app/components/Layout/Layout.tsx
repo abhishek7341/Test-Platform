@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { Fragment, ReactNode } from "react";
 import { ILayoutProps } from "../../utility/interfaces/ui";
-import Carousel from "../Carousel/Carousel";
+import Carousel from "../carousel/Carousel";
 
 const Layout = ({ children }: ILayoutProps) => {
   return (
